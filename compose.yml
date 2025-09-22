@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:15
+    container_name: udemy_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: udemy
+    volumes:
+      - db_data_classdoor:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - udemy_net
+
+  app:
+    build: .
+    container_name: classroom_app
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    networks:
+      - udemy_net
+    command: sh -c "npm install && npm run dev"
+
+networks:
+  udemy_net:
+
+volumes:
+  db_data_classdoor:
